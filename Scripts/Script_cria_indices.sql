@@ -17,3 +17,6 @@ create index com_codfor_sk on compras(codfor);
 
 create unique index cli_cpfcli_uk on cliente(cpfcli);
 create unique index cid_cepcid_uk on cidade(cepcid);
+create unique index for_cnpfor_uk on fornecedor(cnpfor)
+
+select * from fornecedor;
