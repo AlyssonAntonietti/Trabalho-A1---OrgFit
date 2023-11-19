@@ -4,7 +4,9 @@ CREATE TABLE Cidade (
   nomcid varchar(40) NOT NULL, 
   estcid varchar(2) NOT NULL, 
   cepcid numeric(8, 0) NOT NULL UNIQUE, 
-  PRIMARY KEY (codcid));
+  PRIMARY KEY (codcid)
+);
+ 
 COMMENT ON TABLE Cidade IS 'Cadastro de cidade';
 COMMENT ON COLUMN Cidade.codcid IS 'Código da Cidade';
 COMMENT ON COLUMN Cidade.nomcid IS 'Nome da cidade       ';
@@ -20,7 +22,9 @@ CREATE TABLE Cliente (
   codcid    int4 NOT NULL, 
   sexcli    varchar(1) CHECK(sexcli in ('F','M')) 	, 
   codloj    int4 NOT NULL, 
-  PRIMARY KEY (codcli));
+  PRIMARY KEY (codcli)
+);
+
 COMMENT ON TABLE Cliente IS 'Cadastro de cliente';
 COMMENT ON COLUMN Cliente.nomcli IS 'Nome do cliente';
 COMMENT ON COLUMN Cliente.cpfcli IS 'CPF do cliente';
@@ -34,7 +38,9 @@ CREATE TABLE Compras (
   qtdcomfor int4 NOT NULL, 
   codmer    int4 NOT NULL, 
   codfor    int4 NOT NULL, 
-  PRIMARY KEY (codcomfor));
+  PRIMARY KEY (codcomfor)
+);
+
 COMMENT ON TABLE Compras IS 'Cadastro de compras de fornecedor';
 COMMENT ON COLUMN Compras.codcomfor IS 'Código de compra de fornecedor';
 COMMENT ON COLUMN Compras.vlrcomfor IS 'Valor da compra de forncecodor';
@@ -47,7 +53,9 @@ CREATE TABLE Fornecedor (
   numtelfor numeric(11, 0) NOT NULL, 
   codloj    int4 NOT NULL, 
   codcid    int4 NOT NULL, 
-  PRIMARY KEY (codfor));
+  PRIMARY KEY (codfor)
+);
+
 COMMENT ON TABLE Fornecedor IS 'Cadastro do fornecedor';
 COMMENT ON COLUMN Fornecedor.codfor IS 'Código do fornecedor';
 COMMENT ON COLUMN Fornecedor.cnpfor IS 'CNPJ do fornecedor';
@@ -59,7 +67,9 @@ CREATE TABLE Funcionario (
   nomfun    varchar(40) NOT NULL, 
   numtelfun numeric(11, 0), 
   codloj    int4 NOT NULL, 
-  PRIMARY KEY (codfun));
+  PRIMARY KEY (codfun)
+);
+
 COMMENT ON TABLE Funcionario IS 'Cadastro de funcionário';
 COMMENT ON COLUMN Funcionario.codfun IS 'Código do funcionário';
 COMMENT ON COLUMN Funcionario.nomfun IS 'Nome do funcionário';
@@ -71,7 +81,9 @@ CREATE TABLE Loja (
   razsocloj varchar(80) NOT NULL, 
   nomfanloj varchar(50) NOT NULL, 
   numtelloj numeric(11, 0) NOT NULL, 
-  PRIMARY KEY (codloj));
+  PRIMARY KEY (codloj)
+);
+
 COMMENT ON TABLE Loja IS 'Cadastro da loja';
 COMMENT ON COLUMN Loja.codloj IS 'Código da loja';
 COMMENT ON COLUMN Loja.cnploj IS 'CNPJ da loja';
@@ -84,7 +96,10 @@ CREATE TABLE Mercadoria (
   valvenmer numeric(8, 2) NOT NULL, 
   quamer    int4 NOT NULL, 
   codloj    int4 NOT NULL, 
-  PRIMARY KEY (codmer));
+  codven    int4 NOT NULL, 
+  PRIMARY KEY (codmer)
+);
+
 COMMENT ON TABLE Mercadoria IS 'Cadastro de mercadoria';
 COMMENT ON COLUMN Mercadoria.codmer IS 'Código da mercadoria';
 COMMENT ON COLUMN Mercadoria.desmer IS 'Descrição do mercadoria';
@@ -96,18 +111,22 @@ CREATE TABLE Venda (
   datven timestamp NOT NULL, 
   codcli int4 NOT NULL, 
   codfun int4 NOT NULL, 
-  PRIMARY KEY (codven));
+  PRIMARY KEY (codven)
+);
+
 COMMENT ON TABLE Venda IS 'Cadastro de venda';
 COMMENT ON COLUMN Venda.codven IS 'Código da venda';
 COMMENT ON COLUMN Venda.datven IS 'Data da venda';
 
 CREATE TABLE Venda_Mercadoria (
+  codvenmer SERIAL NOT NULL, 
   codven    int4 NOT NULL, 
   codmer    int4 NOT NULL, 
   valmerven numeric(8, 2) NOT NULL, 
-  quamerven numeric(6, 0), 
-  PRIMARY KEY (codven, 
-  codmer));
+  quamerven numeric(6, 0) NOT NULL, 
+  PRIMARY KEY (codvenmer)
+);
+
 COMMENT ON TABLE Venda_Mercadoria IS 'Cadastro de venda de mercadoria';
 COMMENT ON COLUMN Venda_Mercadoria.valmerven IS 'Valor do preço de venda';
 COMMENT ON COLUMN Venda_Mercadoria.quamerven IS 'Quantidade de venda da mercadoria';
