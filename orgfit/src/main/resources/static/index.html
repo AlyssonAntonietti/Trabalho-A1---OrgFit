@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <title>ORGFIT</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body>
+    <h3><center>Cadastro de Mercadoria</center></h3>
+    <br>
+
+    <form action="" id="formCadastroMercadoria">
+        <div class="mb-3">
+            <label for="id" class="form-label">CÓDIGO</label>
+            <input type="text" class="form-control" id="id" readonly="readonly">
+        </div>
+        <div class="mb-3">
+            <label for="descricao" class="form-label">DESCRIÇÃO DA MERCADORIA</label>
+            <input type="text" class="form-control" id="descricao" placeholder="Informe a descrição" required="required">
+        </div>
+        <div class="mb-3">
+            <label for="valor" class="form-label">PREÇO DE VENDA</label>
+            <input type="number" class="form-control" id="valor">
+        </div>
+        <div class="mb-3">
+            <label for="quantidade" class="form-label">ESTOQUE</label>
+            <input type="number" class="form-control" id="quantidade">
+        </div>
+        <div class="mb-3">
+            <label for="loja" class="form-label">CÓDIGO LOJA</label>
+            <input type="number" class="form-control" id="loja">
+        </div>
+    </form>
+    <button type="button" class="btn btn-primary" onclick="salvarMercadoria()">Salvar</button>
+
+    <button type="button" class="btn btn-secondary"
+        onclick="document.getElementById('formCadastroMercadoria').reset();">Novo</button>
+
+    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+        data-bs-target="#modalPesquisarMercadoria">Pesquisar</button>
+
+    <button type="button" class="btn btn-danger" onclick="excluirMercadoriaBotao()">Excluir</button>
+
+    <div class="modal fade" id="modalPesquisarMercadoria" tabindex="-1" aria-labelledby="Pesquisar Mercadorias"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Pesquisa de
+                        mercadorias:</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="nomeBusca" class="col-form-label">Informe o
+                                nome:</label> <input type="text" class="form-control" id="nomeBusca">
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="pesquisarMercadoria()">Buscar</button>
+                    </form>
+
+                    <div style="height:300px; overflow:auto;">
+                        <table class="table table-striped" id="tabelaresultados">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Código</th>
+                                    <th scope="col">Descrição</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Estoque</th>
+                                    <th scope="col">Loja</th>
+                                    <th scope="col">Editar</th>
+                                    <th scope="col">Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <script type"text/javascript">
+        function salvarMercadoria() {
+            var id = $("#id").val();
+            var descricao = $("#descricao").val();
+            var valor = $("#valor").val();
+            var quantidade = $("#quantidade").val();
+            var loja = $("#loja").val();
+
+            if (descricao == "") {
+                alert("Informe a descrição! ");
+                $("#descricao").focus();
+                return;
+            } else {
+                $.ajax({
+                    method: "POST",
+                    url: "mercadoria/salvar",
+                    data: JSON.stringify({ id: id, descricao: descricao, valor: valor, quantidade: quantidade, loja: loja }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        $("#id").val(response.id);
+                        alert("Salvo com sucesso!");
+                    }
+                }).fail(function (xhr, status, errorThrown) {
+                    alert("Erro ao salvar: " + xhr.responseText);
+                });
+            }
+        }
+
+        function pesquisarMercadoria() {
+            var nome = $("#nomeBusca").val();
+            if (nome != null && nome.trim() != '') {
+                $.ajax({
+                    method: "GET",
+                    url: "mercadoria/buscarpornome",
+                    data: "descricao=" + nome,
+                    success:
+                        function (response) {
+                            $("#tabelaresultados > tbody > tr").remove();
+                            for (var i = 0; i < response.length; i++) {
+                                $('#tabelaresultados > tbody').append('<tr id="' + response[i].id + '"><td>' +
+                                    response[i].id + '</td><td>' +
+                                    response[i].descricao + '</td><td>' +
+									response[i].valor + '</td><td>' +
+									response[i].quantidade + '</td><td>' + 
+									response[i].loja + '</td><td><button type="button" onclick="colocarEmEdicao(' +
+                                    response[i].id + ')"class="btn btn-primary">+</button></td> <td><button type="button" class= "btn btn-danger" onclick = "excluirMercadoria(' + response[i].id + ')" > x</button ></td ></tr > ')
+                            }
+
+                        }
+                }).fail(function (xhr, status, errorThrown) {
+                    alert("Erro ao buscar mercadoria: " + xhr.responseText);
+                });
+            }
+        }
+
+        function colocarEmEdicao(id) {
+            $.ajax({
+                method: "GET",
+                url: "mercadoria/buscarporid",
+                data: "id=" + id,
+                success: function (response) {
+                    $("#id").val(response.id);
+                    $("#descricao").val(response.descricao);
+                    $("#valor").val(response.valor);
+                    $("#quantidade").val(response.quantidade);
+                    $("#loja").val(response.loja);
+                    $('#modalPesquisarMercadoria').modal('hide');
+                }
+            }).fail(function (xhr, status, errorThrown) {
+                alert("Erro ao buscar mercadoria pelo código: " + xhr.responseText);
+            });
+        }
+
+        function excluirMercadoria(id) {
+            if (confirm('Deseja realmente excluir?')) {
+                $.ajax({
+                    method: "DELETE",
+                    url: "mercadoria/delete",
+                    data: "idmercadoria=" + id,
+                    success: function (response) {
+                        $('#' + id).remove();
+                        alert(response);
+                    }
+                }).fail(function (xhr, status, errorThrown) {
+                    alert("Erro ao deletar mercadoria por código: " + xhr.responseText);
+                });
+            }
+        }
+
+        function excluirMercadoriaBotao() {
+            var id = $('#id').val();
+            if (id != null && id.trim() != '') {
+                excluirMercadoria(id);
+                document.getElementById('formCadastroMercadoria').reset();
+            }
+        }
+
+    </script>
+
+
+
+</body>
+
+</html>
